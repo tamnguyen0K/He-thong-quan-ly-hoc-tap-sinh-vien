@@ -45,7 +45,12 @@ mysql -u root -p < database_setup.sql
 
 Hoặc copy nội dung file vào MySQL Workbench và chạy.
 
-2. Cập nhật thông tin kết nối database trong `src/main/java/com/lms/util/DBUtil.java`:
+2. Tạo file `src/main/java/com/lms/util/DBUtil.java` từ file `DBUtil.example.java`:
+```bash
+cp DBUtil.example.java src/main/java/com/lms/util/DBUtil.java
+```
+
+3. Cập nhật thông tin kết nối database trong `src/main/java/com/lms/util/DBUtil.java`:
 ```java
 private static final String DB_USER = "root";
 private static final String DB_PASSWORD = "your_password"; // Điền password MySQL của bạn
@@ -151,9 +156,8 @@ http://localhost:8080/lms-project/
 
 - Đảm bảo MySQL đang chạy trước khi start Tomcat
 - Kiểm tra port 8080 không bị chiếm bởi ứng dụng khác
-- Cập nhật password MySQL trong DBUtil.java
+- File `DBUtil.java` không được commit lên git (chứa password). Sử dụng `DBUtil.example.java` làm template.
 
 ## Tác giả
 
 Đồ án Lập trình Web - Hệ Thống Quản Lý Học Tập
-
