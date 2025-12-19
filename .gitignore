@@ -19,11 +19,8 @@ buildNumber.properties
 # Package Files
 *.jar
 *.war
-*.nar
 *.ear
-*.zip
-*.tar.gz
-*.rar
+*.nar
 
 # IDE
 .idea/
@@ -31,22 +28,21 @@ buildNumber.properties
 *.iws
 *.ipr
 .vscode/
+.settings/
 .classpath
 .project
-.settings/
-*.swp
-*.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Database config (chứa password)
-DBUtil.java
-src/main/java/com/lms/util/DBUtil.java
+# Uploads (có thể giữ lại nếu cần)
+uploads/documents/*
 
-# Uploads (không commit files upload)
-src/main/webapp/uploads/documents/*
-!src/main/webapp/uploads/documents/.gitkeep
+# Database config (nếu có file riêng)
+# db.properties
+
+# Temporary files
+*.tmp
+*.temp
 
