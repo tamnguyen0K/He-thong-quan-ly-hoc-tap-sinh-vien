@@ -1,15 +1,3 @@
-# Compiled class files
-*.class
-
-# Log files
-*.log
-
-# Package Files
-*.jar
-*.war
-*.ear
-*.nar
-
 # Maven
 target/
 pom.xml.tag
@@ -22,40 +10,43 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# IDE - IntelliJ IDEA
-.idea/
-*.iws
-*.iml
-*.ipr
-out/
+# Compiled class files
+*.class
 
-# IDE - Eclipse
+# Log files
+*.log
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
 .classpath
 .project
 .settings/
-bin/
-
-# IDE - VS Code
-.vscode/
+*.swp
+*.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Uploaded files
-uploads/documents/*
-!uploads/documents/.gitkeep
-
-# Database config (chứa password) - KHÔNG commit file này
+# Database config (chứa password)
+DBUtil.java
 src/main/java/com/lms/util/DBUtil.java
 
-# Temporary files
-*.tmp
-*.bak
-*.swp
-*~
-
-# Build files
-*.war
-*.ear
+# Uploads (không commit files upload)
+src/main/webapp/uploads/documents/*
+!src/main/webapp/uploads/documents/.gitkeep
 
