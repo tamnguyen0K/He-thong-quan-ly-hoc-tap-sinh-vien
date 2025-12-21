@@ -1,14 +1,18 @@
 package com.lms.controller;
 
-import com.lms.dao.UserDAO;
-import com.lms.model.User;
-import com.lms.util.PasswordUtil;
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.lms.dao.UserDAO;
+import com.lms.dao.UserProfileDAO;
+import com.lms.model.User;
+import com.lms.model.UserProfile;
+import com.lms.util.PasswordUtil;
 
 /**
  * Servlet xử lý đăng ký tài khoản
@@ -35,6 +39,7 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Lấy dữ liệu từ form
+        String hoTen = request.getParameter("hoTen");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
@@ -42,7 +47,9 @@ public class RegisterServlet extends HttpServlet {
         // Validate
         String error = null;
         
-        if (email == null || email.trim().isEmpty()) {
+        if (hoTen == null || hoTen.trim().isEmpty()) {
+            error = "Họ và tên không được để trống";
+        } else if (email == null || email.trim().isEmpty()) {
             error = "Email không được để trống";
         } else if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             error = "Email không hợp lệ";
@@ -75,11 +82,16 @@ public class RegisterServlet extends HttpServlet {
         // Hash password
         String passwordHash = PasswordUtil.hashPassword(password);
         
-        // Tạo user mới
-        User newUser = new User(email, passwordHash, "student");
+        // Tạo user mới với họ tên
+        User newUser = new User(email, passwordHash, "student", hoTen.trim());
         int userId = userDAO.create(newUser);
         
         if (userId > 0) {
+            // Tạo UserProfile với hoTen ngay khi đăng ký để đồng bộ
+            UserProfileDAO profileDAO = new UserProfileDAO();
+            UserProfile profile = new UserProfile(userId, hoTen.trim(), null, null);
+            profileDAO.createOrUpdate(profile);
+            
             // Đăng ký thành công, redirect đến trang đăng nhập
             response.sendRedirect(request.getContextPath() + "/login?success=Đăng ký thành công! Vui lòng đăng nhập.");
         } else {

@@ -1,33 +1,47 @@
 package com.lms.dao;
 
-import com.lms.model.Schedule;
-import com.lms.util.DBUtil;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lms.model.Schedule;
+import com.lms.util.DBUtil;
+
 /**
- * Data Access Object cho bảng schedules
- * Xử lý các thao tác CRUD với database
+ * Data Access Object cho bảng schedules Xử lý các thao tác CRUD với database
  */
 public class ScheduleDAO {
-    
+
     /**
      * Lấy tất cả lịch học của user, sắp xếp theo thứ và thời gian
+     *
      * @param userId ID của user
      * @return Danh sách Schedule
      */
     public List<Schedule> findAllByUserId(int userId) {
         List<Schedule> schedules = new ArrayList<>();
-        String sql = "SELECT * FROM schedules WHERE user_id = ? ORDER BY " +
-                     "FIELD(thu_trong_tuan, 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'), " +
-                     "thoi_gian_bat_dau";
-        
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+        String sql = "SELECT * FROM schedules WHERE user_id = ? ORDER BY "
+                + "CASE "
+                + "WHEN thu_trong_tuan = 'Thứ 2' OR thu_trong_tuan = '2' THEN 1 "
+                + "WHEN thu_trong_tuan = 'Thứ 3' OR thu_trong_tuan = '3' THEN 2 "
+                + "WHEN thu_trong_tuan = 'Thứ 4' OR thu_trong_tuan = '4' THEN 3 "
+                + "WHEN thu_trong_tuan = 'Thứ 5' OR thu_trong_tuan = '5' THEN 4 "
+                + "WHEN thu_trong_tuan = 'Thứ 6' OR thu_trong_tuan = '6' THEN 5 "
+                + "WHEN thu_trong_tuan = 'Thứ 7' OR thu_trong_tuan = '7' THEN 6 "
+                + "WHEN thu_trong_tuan = 'Chủ nhật' THEN 7 "
+                + "ELSE 99 "
+                + "END, "
+                + "thoi_gian_bat_dau";
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, userId);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     schedules.add(mapResultSetToSchedule(rs));
@@ -36,23 +50,23 @@ public class ScheduleDAO {
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách lịch học: " + e.getMessage());
         }
-        
+
         return schedules;
     }
-    
+
     /**
      * Tìm schedule theo ID
+     *
      * @param id ID của schedule
      * @return Schedule object nếu tìm thấy, null nếu không tìm thấy
      */
     public Schedule findById(int id) {
         String sql = "SELECT * FROM schedules WHERE id = ?";
-        
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, id);
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToSchedule(rs);
@@ -61,22 +75,22 @@ public class ScheduleDAO {
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm schedule theo ID: " + e.getMessage());
         }
-        
+
         return null;
     }
-    
+
     /**
      * Tạo schedule mới
+     *
      * @param schedule Schedule object cần tạo
      * @return ID của schedule vừa tạo, -1 nếu lỗi
      */
     public int create(Schedule schedule) {
-        String sql = "INSERT INTO schedules (user_id, ten_mon, thu_trong_tuan, thoi_gian_bat_dau, " +
-                     "thoi_gian_ket_thuc, phong_hoc, ghi_chu) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+        String sql = "INSERT INTO schedules (user_id, ten_mon, thu_trong_tuan, thoi_gian_bat_dau, "
+                + "thoi_gian_ket_thuc, phong_hoc, ghi_chu) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             pstmt.setInt(1, schedule.getUserId());
             pstmt.setString(2, schedule.getTenMon());
             pstmt.setString(3, schedule.getThuTrongTuan());
@@ -84,9 +98,9 @@ public class ScheduleDAO {
             pstmt.setTime(5, schedule.getThoiGianKetThuc());
             pstmt.setString(6, schedule.getPhongHoc());
             pstmt.setString(7, schedule.getGhiChu());
-            
+
             int affectedRows = pstmt.executeUpdate();
-            
+
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
@@ -97,22 +111,22 @@ public class ScheduleDAO {
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo schedule: " + e.getMessage());
         }
-        
+
         return -1;
     }
-    
+
     /**
      * Cập nhật schedule
+     *
      * @param schedule Schedule object cần cập nhật
      * @return true nếu cập nhật thành công, false nếu lỗi
      */
     public boolean update(Schedule schedule) {
-        String sql = "UPDATE schedules SET ten_mon = ?, thu_trong_tuan = ?, thoi_gian_bat_dau = ?, " +
-                     "thoi_gian_ket_thuc = ?, phong_hoc = ?, ghi_chu = ? WHERE id = ?";
-        
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+        String sql = "UPDATE schedules SET ten_mon = ?, thu_trong_tuan = ?, thoi_gian_bat_dau = ?, "
+                + "thoi_gian_ket_thuc = ?, phong_hoc = ?, ghi_chu = ? WHERE id = ?";
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, schedule.getTenMon());
             pstmt.setString(2, schedule.getThuTrongTuan());
             pstmt.setTime(3, schedule.getThoiGianBatDau());
@@ -120,60 +134,61 @@ public class ScheduleDAO {
             pstmt.setString(5, schedule.getPhongHoc());
             pstmt.setString(6, schedule.getGhiChu());
             pstmt.setInt(7, schedule.getId());
-            
+
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi khi cập nhật schedule: " + e.getMessage());
         }
-        
+
         return false;
     }
-    
+
     /**
      * Xóa schedule
+     *
      * @param id ID của schedule cần xóa
      * @return true nếu xóa thành công, false nếu lỗi
      */
     public boolean delete(int id) {
         String sql = "DELETE FROM schedules WHERE id = ?";
-        
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setInt(1, id);
-            
+
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa schedule: " + e.getMessage());
         }
-        
+
         return false;
     }
-    
+
     /**
      * Kiểm tra trùng lịch
+     *
      * @param userId ID của user
      * @param thu Thứ trong tuần
      * @param batDau Thời gian bắt đầu
      * @param ketThuc Thời gian kết thúc
-     * @param excludeId ID của schedule cần loại trừ (dùng khi update), -1 nếu không loại trừ
+     * @param excludeId ID của schedule cần loại trừ (dùng khi update), -1 nếu
+     * không loại trừ
      * @return true nếu trùng lịch, false nếu không trùng
      */
     public boolean checkConflict(int userId, String thu, Time batDau, Time ketThuc, int excludeId) {
-        String sql = "SELECT COUNT(*) FROM schedules WHERE user_id = ? AND thu_trong_tuan = ? " +
-                     "AND ((thoi_gian_bat_dau <= ? AND thoi_gian_ket_thuc > ?) OR " +
-                     "(thoi_gian_bat_dau < ? AND thoi_gian_ket_thuc >= ?) OR " +
-                     "(thoi_gian_bat_dau >= ? AND thoi_gian_ket_thuc <= ?))";
-        
+        String sql = "SELECT COUNT(*) FROM schedules WHERE user_id = ? AND thu_trong_tuan = ? "
+                + "AND ((thoi_gian_bat_dau <= ? AND thoi_gian_ket_thuc > ?) OR "
+                + "(thoi_gian_bat_dau < ? AND thoi_gian_ket_thuc >= ?) OR "
+                + "(thoi_gian_bat_dau >= ? AND thoi_gian_ket_thuc <= ?))";
+
         if (excludeId > 0) {
             sql += " AND id != ?";
         }
-        
-        try (Connection conn = DBUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             int paramIndex = 1;
             pstmt.setInt(paramIndex++, userId);
             pstmt.setString(paramIndex++, thu);
@@ -183,11 +198,11 @@ public class ScheduleDAO {
             pstmt.setTime(paramIndex++, ketThuc);
             pstmt.setTime(paramIndex++, batDau);
             pstmt.setTime(paramIndex++, ketThuc);
-            
+
             if (excludeId > 0) {
                 pstmt.setInt(paramIndex++, excludeId);
             }
-            
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -196,12 +211,13 @@ public class ScheduleDAO {
         } catch (SQLException e) {
             System.err.println("Lỗi khi kiểm tra trùng lịch: " + e.getMessage());
         }
-        
+
         return false;
     }
-    
+
     /**
      * Map ResultSet thành Schedule object
+     *
      * @param rs ResultSet từ database
      * @return Schedule object
      * @throws SQLException nếu có lỗi khi đọc dữ liệu
@@ -220,4 +236,3 @@ public class ScheduleDAO {
         return schedule;
     }
 }
-

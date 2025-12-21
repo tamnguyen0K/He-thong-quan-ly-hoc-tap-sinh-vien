@@ -17,7 +17,7 @@
             background: #f5f5f5;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background:#667eea;
             color: white;
             padding: 20px;
             text-align: center;
@@ -39,7 +39,7 @@
             margin-bottom: 10px;
         }
         .welcome-card p {
-            color: #666;
+            color: #ffffff;
             font-size: 18px;
         }
         .logout-btn {
@@ -59,22 +59,10 @@
 </head>
 <body>
     <div class="header">
-        <h1>Hệ Thống Quản Lý Học Tập</h1>
+        <h1>Chào Mừng Đến Hệ Thống Quản Lý Học Tập</h1>
     </div>
     
     <div class="container">
-        <div class="welcome-card">
-            <h1>Chào mừng đến Dashboard</h1>
-            <%
-                User user = (User) request.getAttribute("user");
-                if (user != null) {
-            %>
-                <p>Xin chào, <strong><%= user.getEmail() %></strong>!</p>
-            <%
-                }
-            %>
-        </div>
-        
         <div class="welcome-card" style="margin-top: 20px; text-align: left;">
             <h2 style="text-align: center; margin-bottom: 30px;">Menu điều hướng</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">

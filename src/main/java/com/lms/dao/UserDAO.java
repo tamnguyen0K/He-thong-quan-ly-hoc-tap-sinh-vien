@@ -1,8 +1,13 @@
 package com.lms.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import com.lms.model.User;
 import com.lms.util.DBUtil;
-import java.sql.*;
 
 /**
  * Data Access Object cho bảng users
@@ -41,7 +46,7 @@ public class UserDAO {
      * @return ID của user vừa tạo, -1 nếu lỗi
      */
     public int create(User user) {
-        String sql = "INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (email, password_hash, role, ho_ten) VALUES (?, ?, ?, ?)";
         
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -49,6 +54,7 @@ public class UserDAO {
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPasswordHash());
             pstmt.setString(3, user.getRole() != null ? user.getRole() : "student");
+            pstmt.setString(4, user.getHoTen());
             
             int affectedRows = pstmt.executeUpdate();
             
@@ -110,6 +116,30 @@ public class UserDAO {
     }
     
     /**
+     * Cập nhật họ tên của user
+     * @param userId ID của user
+     * @param hoTen Họ tên mới
+     * @return true nếu cập nhật thành công, false nếu lỗi
+     */
+    public boolean updateHoTen(int userId, String hoTen) {
+        String sql = "UPDATE users SET ho_ten = ? WHERE id = ?";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, hoTen);
+            pstmt.setInt(2, userId);
+            
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật họ tên: " + e.getMessage());
+        }
+        
+        return false;
+    }
+    
+    /**
      * Map ResultSet thành User object
      * @param rs ResultSet từ database
      * @return User object
@@ -121,6 +151,7 @@ public class UserDAO {
         user.setEmail(rs.getString("email"));
         user.setPasswordHash(rs.getString("password_hash"));
         user.setRole(rs.getString("role"));
+        user.setHoTen(rs.getString("ho_ten"));
         user.setCreatedAt(rs.getTimestamp("created_at"));
         return user;
     }

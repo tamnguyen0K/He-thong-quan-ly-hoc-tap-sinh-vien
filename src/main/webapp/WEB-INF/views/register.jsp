@@ -43,7 +43,8 @@
             font-weight: bold;
         }
         input[type="email"],
-        input[type="password"] {
+        input[type="password"],
+        input[type="text"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -51,7 +52,8 @@
             font-size: 16px;
         }
         input[type="email"]:focus,
-        input[type="password"]:focus {
+        input[type="password"]:focus,
+        input[type="text"]:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -121,6 +123,12 @@
         <% } %>
         
         <form method="post" action="<%= request.getContextPath() %>/register" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="hoTen">Họ và tên:</label>
+                <input type="text" id="hoTen" name="hoTen" required
+                       value="<%= request.getParameter("hoTen") != null ? request.getParameter("hoTen") : "" %>">
+            </div>
+            
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required 

@@ -11,6 +11,7 @@ public class User {
     private String email;
     private String passwordHash;
     private String role;
+    private String hoTen;
     private Timestamp createdAt;
     
     // Constructor mặc định
@@ -18,11 +19,12 @@ public class User {
     }
     
     // Constructor đầy đủ
-    public User(int id, String email, String passwordHash, String role, Timestamp createdAt) {
+    public User(int id, String email, String passwordHash, String role, String hoTen, Timestamp createdAt) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
+        this.hoTen = hoTen;
         this.createdAt = createdAt;
     }
     
@@ -31,6 +33,14 @@ public class User {
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
+    }
+    
+    // Constructor với hoTen (dùng khi tạo mới có tên)
+    public User(String email, String passwordHash, String role, String hoTen) {
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.hoTen = hoTen;
     }
     
     // Getter và Setter
@@ -66,6 +76,14 @@ public class User {
         this.role = role;
     }
     
+    public String getHoTen() {
+        return hoTen;
+    }
+    
+    public void setHoTen(String hoTen) {
+        this.hoTen = hoTen;
+    }
+    
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -80,6 +98,7 @@ public class User {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
+                ", hoTen='" + hoTen + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
     }

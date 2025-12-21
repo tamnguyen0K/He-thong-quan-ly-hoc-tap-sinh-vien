@@ -7,6 +7,7 @@ public class Grade {
     private int id;
     private int userId;
     private String tenMon;
+    private String namHoc;
     private String hocKy;
     private int tinChi;
     private BigDecimal diemSo;
@@ -23,6 +24,8 @@ public class Grade {
     public void setUserId(int userId) { this.userId = userId; }
     public String getTenMon() { return tenMon; }
     public void setTenMon(String tenMon) { this.tenMon = tenMon; }
+    public String getNamHoc() { return namHoc; }
+    public void setNamHoc(String namHoc) { this.namHoc = namHoc; }
     public String getHocKy() { return hocKy; }
     public void setHocKy(String hocKy) { this.hocKy = hocKy; }
     public int getTinChi() { return tinChi; }

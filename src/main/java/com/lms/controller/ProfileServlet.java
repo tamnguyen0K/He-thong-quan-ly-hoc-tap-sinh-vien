@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.lms.dao.UserDAO;
 import com.lms.dao.UserProfileDAO;
 import com.lms.model.User;
 import com.lms.model.UserProfile;
@@ -115,6 +116,15 @@ public class ProfileServlet extends HttpServlet {
         
         UserProfileDAO profileDAO = new UserProfileDAO();
         boolean success = profileDAO.createOrUpdate(profile);
+        
+        // Đồng bộ hoTen từ UserProfile sang User nếu có thay đổi
+        if (success && hoTen != null && !hoTen.trim().isEmpty()) {
+            UserDAO userDAO = new UserDAO();
+            userDAO.updateHoTen(user.getId(), hoTen.trim());
+            // Cập nhật user trong session
+            user.setHoTen(hoTen.trim());
+            session.setAttribute("user", user);
+        }
         
         // Lấy lại profile sau khi cập nhật để hiển thị
         profile = profileDAO.findByUserId(user.getId());

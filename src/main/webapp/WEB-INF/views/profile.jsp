@@ -18,7 +18,7 @@
             background: #f5f5f5;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background:#667eea;
             color: white;
             padding: 20px;
             text-align: center;
@@ -34,7 +34,7 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        h1 {
+        .container .profile-card h1 {
             color: #333;
             margin-bottom: 30px;
         }
@@ -112,7 +112,7 @@
     
     <div class="container">
         <div class="profile-card">
-            <h1>Hồ sơ cá nhân</h1>
+            <h1 style="text-align: center;">Hồ sơ cá nhân</h1>
             
             <%-- Hiển thị thông báo thành công --%>
             <% String successMessage = (String) request.getAttribute("successMessage"); %>

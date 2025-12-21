@@ -1,3 +1,5 @@
+drop database quan_ly_hoc_tap;
+
 -- Tạo database quan_ly_hoc_tap
 CREATE DATABASE IF NOT EXISTS quan_ly_hoc_tap
 CHARACTER SET utf8mb4
@@ -11,6 +13,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'student',
+    ho_ten VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -60,6 +63,7 @@ CREATE TABLE grades (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     ten_mon VARCHAR(255) NOT NULL,
+    nam_hoc VARCHAR(50),
     hoc_ky VARCHAR(100) NOT NULL,
     tin_chi INT NOT NULL,
     diem_so DECIMAL(4,2) NOT NULL,
