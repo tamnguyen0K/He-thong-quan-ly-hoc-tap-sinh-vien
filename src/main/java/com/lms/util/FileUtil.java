@@ -7,26 +7,29 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+
 import javax.servlet.ServletContext;
 
 public class FileUtil {
-    
+
     public static String getFileExtension(String fileName) {
-        if (fileName == null) return "";
+        if (fileName == null) {
+            return "";
+        }
         int lastDot = fileName.lastIndexOf('.');
         return lastDot > 0 ? fileName.substring(lastDot + 1).toLowerCase() : "";
     }
-    
+
     public static boolean isAllowedFileType(String fileName) {
         String ext = getFileExtension(fileName);
         return "pdf".equals(ext) || "doc".equals(ext) || "docx".equals(ext) || "txt".equals(ext);
     }
-    
+
     public static String generateUniqueFileName(String originalName) {
         String ext = getFileExtension(originalName);
         return UUID.randomUUID().toString() + (ext.isEmpty() ? "" : "." + ext);
     }
-    
+
     public static String getUploadDirectory(ServletContext context) {
         String uploadDir = context.getRealPath("/uploads/documents");
         File dir = new File(uploadDir);
@@ -35,7 +38,7 @@ public class FileUtil {
         }
         return uploadDir;
     }
-    
+
     public static boolean saveFile(InputStream inputStream, String fileName, String uploadDir) {
         try {
             Path filePath = Paths.get(uploadDir, fileName);
@@ -46,7 +49,7 @@ public class FileUtil {
             return false;
         }
     }
-    
+
     public static boolean deleteFile(String filePath) {
         try {
             File file = new File(filePath);
@@ -56,11 +59,14 @@ public class FileUtil {
             return false;
         }
     }
-    
+
     public static String formatFileSize(long size) {
-        if (size < 1024) return size + " B";
-        if (size < 1024 * 1024) return String.format("%.2f KB", size / 1024.0);
+        if (size < 1024) {
+            return size + " B";
+        }
+        if (size < 1024 * 1024) {
+            return String.format("%.2f KB", size / 1024.0);
+        }
         return String.format("%.2f MB", size / (1024.0 * 1024.0));
     }
 }
-
